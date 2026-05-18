@@ -107,133 +107,199 @@ int main(){
 
 
 2cp
+A*:
 
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <cmath>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<cmath>
 using namespace std;
 
-struct Node {
-    int x, y, g, h, f;
-    Node* parent;
-
-    Node(int x, int y, int g, int h, Node* p = nullptr) {
-        this->x = x;
-        this->y = y;
-        this->g = g;
-        this->h = h;
-        this->f = g + h;
-        parent = p;
-    }
+struct Node{
+    int x, y;
+    int g, f, h;
+    Node *parent;
 };
 
-int heuristic(int x, int y, int gx, int gy) {
-    return abs(x - gx) + abs(y - gy);
+int heuristic(int x, int y, int gx, int gy){
+    return abs(x-gx)+abs(y-gy);
 }
 
-bool valid(int x, int y, int n, int m, vector<vector<int>>& grid) {
-    return x >= 0 && y >= 0 && x < n && y < m && grid[x][y] == 0;
+bool isValid(int x, int y, int n, int m, vector<vector<int>> &grid){
+    return (
+        x>=0 &&
+        y>=0 &&
+        x<n &&
+        y<m &&
+        grid[x][y] == 0
+    );
 }
 
-void printPath(Node* curr) {
-    vector<pair<int,int>> path;
-
-    while (curr) {
+void print(Node *curr){
+    vector<pair<int, int>> path;
+    while(curr != nullptr){
         path.push_back({curr->x, curr->y});
         curr = curr->parent;
     }
 
     reverse(path.begin(), path.end());
-
-    cout << "\nPath: ";
-    for (auto p : path)
-        cout << "(" << p.first << "," << p.second << ") ";
-
-    cout << endl;
+    cout << "\nOptimal Path (Start to Goal):\n";
+    for(auto p: path){
+        cout<<"("<<p.first<<","<<p.second<<")";
+    }
+    cout<<endl;
 }
 
-void astar(int sx, int sy, int gx, int gy,
-           int n, int m, vector<vector<int>>& grid) {
+void astar(int sx, int sy, int gx, int gy, int n, int m, vector<vector<int>> &grid){
+    vector<Node *> open;
+    vector<vector<bool>> close(n, vector<bool>(m, false));
 
-    vector<Node*> open;
-    vector<vector<bool>> closed(n, vector<bool>(m, false));
+    Node *start = new Node();
+    start->x =sx;
+    start->y =sy;
 
-    open.push_back(new Node(sx, sy, 0,
-                   heuristic(sx, sy, gx, gy)));
+    start->g = 0;
+    start->h = heuristic(sx, sy, gx, gy);
+    start->f = start->g + start->h;
 
-    int dx[] = {-1, 1, 0, 0};
-    int dy[] = {0, 0, -1, 1};
+    start->parent = nullptr;
 
-    while (!open.empty()) {
+    open.push_back(start);
 
+    int dx[4] = {-1, 1, 0, 0};
+    int dy[4] = {0, 0, -1, 1};
+
+    while(!open.empty()){
         int best = 0;
-
-        for (int i = 1; i < open.size(); i++)
-            if (open[i]->f < open[best]->f)
+        for(int i = 1; i<open.size(); i++){
+            if(open[i]->f < open[best]->f){
                 best = i;
+            }
+        }
 
-        Node* curr = open[best];
-        open.erase(open.begin() + best);
-
-        if (closed[curr->x][curr->y])
+        Node *curr = open[best];
+        open.erase(open.begin()+best);
+        if(close[curr->x][curr->y]){
             continue;
+        }
 
-        closed[curr->x][curr->y] = true;
+        close[curr->x][curr->y] = true;
 
         cout << "\nCurrent Node: ("
-             << curr->x << "," << curr->y
-             << ") f(n)=" << curr->f << endl;
+             << curr->x
+             << ","
+             << curr->y
+             << ")";
 
-        if (curr->x == gx && curr->y == gy) {
-            cout << "\nPath Found!\n";
-            printPath(curr);
+        cout << "\ng(n) = "
+             << curr->g;
+
+        cout << "\nh(n) = "
+             << curr->h;
+
+        cout << "\nf(n) = "
+            << curr->g
+            << " + "
+            << curr->h
+            << " = "
+            << curr->f
+            << endl;
+
+        if(curr->x == gx && curr->y == gy){
+            cout<<"Path found!"<<endl;
+            cout<<"Path: ";
+            print(curr);
+            cout<<endl;
             return;
         }
 
-        for (int i = 0; i < 4; i++) {
+        //Explore neighbor
+        for(int i = 0; i<4; i++){
+            int nx = curr->x+dx[i];
+            int ny = curr->y+dy[i];
 
-            int nx = curr->x + dx[i];
-            int ny = curr->y + dy[i];
-
-            if (!valid(nx, ny, n, m, grid) || closed[nx][ny])
+            if(!isValid(nx, ny, n, m, grid) || close[nx][ny]){
                 continue;
+            }
 
-            int g = curr->g + 1;
-            int h = heuristic(nx, ny, gx, gy);
+            // Create Neighbor Node
+            Node *neighbor = new Node;
 
-            open.push_back(new Node(nx, ny, g, h, curr));
+            neighbor->x = nx;
+
+            neighbor->y = ny;
+
+            neighbor->g = curr->g + 1;
+
+            neighbor->h =
+                heuristic(nx, ny, gx, gy);
+
+            neighbor->f =
+                neighbor->g + neighbor->h;
+
+            neighbor->parent = curr;
+
+            // Print Neighbor Details
+            cout << "\nNeighbor Node: ("
+                 << nx
+                 << ","
+                 << ny
+                 << ")";
+
+            cout << "\ng(n) = "
+                 << neighbor->g;
+
+            cout << "\nh(n) = "
+                 << neighbor->h;
+
+            cout << "\nf(n) = "
+                 << neighbor->g
+                 << " + "
+                 << neighbor->h
+                 << " = "
+                 << neighbor->f
+                 << endl;
+
+            // Add to OPEN list
+            open.push_back(neighbor);
         }
     }
-
-    cout << "\nNo Path Found\n";
+    cout<<"\nNo path found"<<endl;
 }
 
-int main() {
-
+int main(){
     int n, m;
-    cout << "Enter rows and columns: ";
-    cin >> n >> m;
+    cout<<"Enter rows and columns: ";
+    cin>>n>>m;
+    cout<<endl;
 
     vector<vector<int>> grid(n, vector<int>(m));
 
-    cout << "\nEnter Grid (0=Free, 1=Obstacle):\n";
-
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < m; j++)
+    cout<<"Enter grid: \n";
+    cout<<"0: free cell\n";
+    cout<<"1: Obstacle\n";
+    for(int i = 0; i<n;i++){
+        for(int j = 0; j<m;j++){
             cin >> grid[i][j];
+        }
+    }
 
-    int sx, sy, gx, gy;
+    int sx, sy;
+
+    int gx, gy;
 
     cout << "\nEnter Start Position: ";
+
     cin >> sx >> sy;
 
     cout << "Enter Goal Position: ";
+
     cin >> gx >> gy;
 
     astar(sx, sy, gx, gy, n, m, grid);
 
     return 0;
+
 }
 
 
