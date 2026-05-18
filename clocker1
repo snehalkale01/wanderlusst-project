@@ -1,1 +1,495 @@
+1cp
+dfs, bfs:
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+using namespace std;
+
+vector<vector<int>> adj;
+
+bool dfs(int current, int dest, vector<bool> &visited, vector<int>& path){
+    visited[current] = true;
+    path.push_back(current);
+    cout<<current<<" ";
+    if(current == dest){
+        return true;
+    }
+
+    for(int neighbor: adj[current]){
+        if(!visited[neighbor]){
+            if(dfs(neighbor, dest, visited, path)){
+                return true;
+            }
+        }
+    }
+
+    path.pop_back(); // backtracking
+    return false;
+}
+
+void bfs(int start, int dest, int v){
+    vector<bool> visited(v, false);
+    vector<int> parent(v, -1);
+    queue<int> q;
+    cout<<"BFS traversal: ";
+    visited[start] = true;
+    q.push(start);
+
+    while(!q.empty()){
+        int current = q.front();
+        q.pop();
+        cout<<current<<" ";
+        if(current == dest) break;
+
+        for(int neighbor: adj[current]){
+            if(!visited[neighbor]){
+                visited[neighbor] = true;
+                parent[neighbor] = current;
+                q.push(neighbor);
+            }
+        }
+    }
+
+    vector<int> path;
+
+    int current = dest;
+    while(current != -1){
+        path.push_back(current);
+        current = parent[current];
+    }
+
+    reverse(path.begin(), path.end());
+    cout<<"Shortest Path: ";
+    for(int node: path)
+        cout<<node<<" ";
+}
+
+int main(){
+    int V, E;
+    cout<<"Enter number of vertices: ";
+    cin>>V;
+
+    cout<<"Enter number of edges: ";
+    cin>>E;
+
+    adj.resize(V);
+
+    cout<<"Enter edges(u v): ";
+    for(int i = 0; i < E; i++){
+        int u, v;
+        cin>>u>>v;
+
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+     int start, dest;
+    cout<<"Enter start: ";
+    cin>>start;
+
+    cout<<"Enter destination: ";
+    cin>>dest;
+    vector<bool> visited(V, false);
+    vector<int> path;
+    cout<<"DFS traversal: ";
+    if(dfs(start, dest, visited, path)){
+        cout<<"Path Exists: ";
+        for(int node: path) 
+            cout<<node<<" ";
+    }
+    cout<< endl;
+
+    bfs(start, dest, V);
+
+    return 0;
+}
+
+
+2cp
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+using namespace std;
+
+struct Node {
+    int x, y, g, h, f;
+    Node* parent;
+
+    Node(int x, int y, int g, int h, Node* p = nullptr) {
+        this->x = x;
+        this->y = y;
+        this->g = g;
+        this->h = h;
+        this->f = g + h;
+        parent = p;
+    }
+};
+
+int heuristic(int x, int y, int gx, int gy) {
+    return abs(x - gx) + abs(y - gy);
+}
+
+bool valid(int x, int y, int n, int m, vector<vector<int>>& grid) {
+    return x >= 0 && y >= 0 && x < n && y < m && grid[x][y] == 0;
+}
+
+void printPath(Node* curr) {
+    vector<pair<int,int>> path;
+
+    while (curr) {
+        path.push_back({curr->x, curr->y});
+        curr = curr->parent;
+    }
+
+    reverse(path.begin(), path.end());
+
+    cout << "\nPath: ";
+    for (auto p : path)
+        cout << "(" << p.first << "," << p.second << ") ";
+
+    cout << endl;
+}
+
+void astar(int sx, int sy, int gx, int gy,
+           int n, int m, vector<vector<int>>& grid) {
+
+    vector<Node*> open;
+    vector<vector<bool>> closed(n, vector<bool>(m, false));
+
+    open.push_back(new Node(sx, sy, 0,
+                   heuristic(sx, sy, gx, gy)));
+
+    int dx[] = {-1, 1, 0, 0};
+    int dy[] = {0, 0, -1, 1};
+
+    while (!open.empty()) {
+
+        int best = 0;
+
+        for (int i = 1; i < open.size(); i++)
+            if (open[i]->f < open[best]->f)
+                best = i;
+
+        Node* curr = open[best];
+        open.erase(open.begin() + best);
+
+        if (closed[curr->x][curr->y])
+            continue;
+
+        closed[curr->x][curr->y] = true;
+
+        cout << "\nCurrent Node: ("
+             << curr->x << "," << curr->y
+             << ") f(n)=" << curr->f << endl;
+
+        if (curr->x == gx && curr->y == gy) {
+            cout << "\nPath Found!\n";
+            printPath(curr);
+            return;
+        }
+
+        for (int i = 0; i < 4; i++) {
+
+            int nx = curr->x + dx[i];
+            int ny = curr->y + dy[i];
+
+            if (!valid(nx, ny, n, m, grid) || closed[nx][ny])
+                continue;
+
+            int g = curr->g + 1;
+            int h = heuristic(nx, ny, gx, gy);
+
+            open.push_back(new Node(nx, ny, g, h, curr));
+        }
+    }
+
+    cout << "\nNo Path Found\n";
+}
+
+int main() {
+
+    int n, m;
+    cout << "Enter rows and columns: ";
+    cin >> n >> m;
+
+    vector<vector<int>> grid(n, vector<int>(m));
+
+    cout << "\nEnter Grid (0=Free, 1=Obstacle):\n";
+
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            cin >> grid[i][j];
+
+    int sx, sy, gx, gy;
+
+    cout << "\nEnter Start Position: ";
+    cin >> sx >> sy;
+
+    cout << "Enter Goal Position: ";
+    cin >> gx >> gy;
+
+    astar(sx, sy, gx, gy, n, m, grid);
+
+    return 0;
+}
+
+
+3py
+N-Queens:
+
+#include<iostream>
+using namespace std;
+
+#define MAX 20
+int board[MAX][MAX];
+
+bool leftRow[MAX];
+bool upperDiagonal[2*MAX];
+bool lowerDiagonal[2*MAX];
+
+int n;
+
+void printBoard(){
+    cout<<"\nSolution\n\n";
+
+    for(int i = 0; i<n; i++){
+        for(int j = 0; j<n; j++){
+            if(board[i][j] == 1){
+                cout<<"Q ";
+            }else{
+                cout<<"* ";
+            }
+        }
+        cout<<endl;
+    }
+}
+
+bool solve(int col){
+    if(col>=n){
+        return true;
+    }
+
+    for(int row = 0; row<n; row++){
+        if(leftRow[row] == false && lowerDiagonal[col+row] == false && upperDiagonal[col-row+n-1] == false){
+            board[row][col] = 1;
+
+            leftRow[row] = true;
+            lowerDiagonal[col+row] = true;
+            upperDiagonal[col-row+n-1] = true;
+
+            if(solve(col+1)) return true;
+
+            //backtracking
+            board[row][col] = 0;
+
+            leftRow[row] = false;
+            lowerDiagonal[col+row] = false;
+            upperDiagonal[col-row+n-1] = false;
+
+        }
+    }
+    return false;
+}
+
+int main(){
+
+    cout<<"Enter number of queens(1-20): ";
+    cin>>n;
+     
+    if(n<0 || n>MAX){
+        cout << "Invalid input";
+        return 0;
+    }
+
+    for(int i = 0; i<n; i++){
+        for(int j = 0; j<n; j++){
+            board[i][j] = 0;
+        }
+    }
+
+    for(int i =0; i<MAX; i++){
+        leftRow[i] = false;
+    }
+
+    for(int i = 0; i< 2*MAX; i++){
+        upperDiagonal[i] = false;
+        lowerDiagonal[i] = false;
+    }
+
+    if(solve(0)){
+        printBoard();
+    }else{
+        cout<<"No solution exists!\n";
+    }
+
+
+    return 0;
+}
+
+
+4.py
+
+# Greedy Algorithms Implementation
+# 1. Selection Sort
+# 2. Job Scheduling Problem
+# 3. Dijkstra's Shortest Path Algorithm
+
+import heapq
+
+# ================= SELECTION SORT =================
+
+def selection_sort(arr):
+
+    n = len(arr)
+
+    for i in range(n):
+
+        min_index = i
+
+        # Find smallest element
+        for j in range(i + 1, n):
+            if arr[j] < arr[min_index]:
+                min_index = j
+
+        # Swap elements
+        arr[i], arr[min_index] = arr[min_index], arr[i]
+
+    return arr
+
+
+# ================= JOB SCHEDULING =================
+
+def job_scheduling():
+
+    jobs = [
+        ('J1', 2, 100),
+        ('J2', 1, 50),
+        ('J3', 2, 10),
+        ('J4', 1, 20),
+        ('J5', 3, 30)
+    ]
+
+    # Sort according to profit
+    jobs.sort(key=lambda x: x[2], reverse=True)
+
+    max_deadline = max(job[1] for job in jobs)
+
+    slots = [False] * max_deadline
+
+    result = []
+
+    total_profit = 0
+
+    for job in jobs:
+
+        name, deadline, profit = job
+
+        for i in range(deadline - 1, -1, -1):
+
+            if not slots[i]:
+
+                slots[i] = True
+                result.append(name)
+                total_profit += profit
+                break
+
+    print("\nSelected Jobs:")
+    print(result)
+
+    print("Total Profit:")
+    print(total_profit)
+
+
+# ================= DIJKSTRA ALGORITHM =================
+
+def dijkstra(graph, start):
+
+    distances = {node: float('inf') for node in graph}
+
+    distances[start] = 0
+
+    priority_queue = [(0, start)]
+
+    while priority_queue:
+
+        current_distance, current_node = heapq.heappop(priority_queue)
+
+        for neighbor, weight in graph[current_node]:
+
+            distance = current_distance + weight
+
+            if distance < distances[neighbor]:
+
+                distances[neighbor] = distance
+
+                heapq.heappush(priority_queue, (distance, neighbor))
+
+    return distances
+
+
+# ================= MAIN PROGRAM =================
+
+while True:
+
+    print("\n===== GREEDY ALGORITHMS MENU =====")
+    print("1. Selection Sort")
+    print("2. Job Scheduling Problem")
+    print("3. Dijkstra Shortest Path")
+    print("4. Exit")
+
+    choice = int(input("Enter your choice: "))
+
+    # -------- Selection Sort --------
+    if choice == 1:
+
+        arr = [64, 25, 12, 22, 11]
+
+        print("\nOriginal Array:")
+        print(arr)
+
+        sorted_array = selection_sort(arr)
+
+        print("\nSorted Array:")
+        print(sorted_array)
+
+    # -------- Job Scheduling --------
+    elif choice == 2:
+
+        job_scheduling()
+
+    # -------- Dijkstra Algorithm --------
+    elif choice == 3:
+
+        graph = {
+            'A': [('B', 4), ('C', 1)],
+            'B': [('D', 2), ('E', 5)],
+            'C': [('B', 2), ('D', 4)],
+            'D': [('E', 1)],
+            'E': []
+        }
+
+        result = dijkstra(graph, 'A')
+
+        print("\nShortest Distances from Source A:\n")
+
+        for node, distance in result.items():
+            print(node, ":", distance)
+
+    # -------- Exit --------
+    elif choice == 4:
+
+        print("\nProgram Ended")
+        break
+
+    else:
+        print("\nInvalid Choice")
+
+
+
+
+
+
 
