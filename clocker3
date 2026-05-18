@@ -150,133 +150,164 @@ function sendMessage() {
 
 2ES
 
+// Advanced Hospital Expert System with Patient Scheduling
+#include <iostream>
+using namespace std;
 
-import time
+struct Patient
+{
+    string name;
+    int age;
+    string symptom;
+    int priority;
+    string disease;
+    string doctor;
+    string test;
+    string room;
+};
 
-print("===================================")
-print(" HOSPITAL EXPERT SYSTEM ")
-print("===================================")
+int main()
+{
+    int n;
 
-while True:
+    cout << "===========================================";
+    cout << "\n     HOSPITAL EXPERT SYSTEM";
+    cout << "\n===========================================";
 
-    name = input("\nEnter Patient Name: ")
-    age = int(input("Enter Age: "))
+    cout << "\n\nEnter number of patients: ";
+    cin >> n;
 
-    print("\nEnter Symptoms (yes/no)\n")
+    Patient p[20];
 
-    fever = input("Fever: ")
-    cough = input("Cough: ")
-    headache = input("Headache: ")
-    stomach = input("Stomach Pain: ")
-    chest = input("Chest Pain: ")
+    // Input Patient Details
+    for(int i = 0; i < n; i++)
+    {
+        cout << "\n===================================";
+        cout << "\nEnter Details of Patient " << i + 1;
+        cout << "\n===================================";
 
-    print("\nAnalyzing Symptoms...")
-    time.sleep(2)
+        cout << "\nEnter Patient Name: ";
+        cin >> p[i].name;
 
-    results = []
+        cout << "Enter Age: ";
+        cin >> p[i].age;
 
-    # Fever Rules
+        cout << "Enter Symptom ";
+        cout << "(fever/cold/headache/chestpain/stomachpain): ";
+        cin >> p[i].symptom;
 
-    if fever.lower() == "yes":
+        // Expert System Rules
+        if(p[i].symptom == "fever")
+        {
+            p[i].disease = "Viral Fever";
+            p[i].doctor = "General Physician";
+            p[i].test = "Blood Test";
+            p[i].priority = 2;
+            p[i].room = "General Ward";
+        }
 
-        if cough.lower() == "yes":
-            disease = "Flu"
+        else if(p[i].symptom == "cold")
+        {
+            p[i].disease = "Common Cold";
+            p[i].doctor = "ENT Specialist";
+            p[i].test = "Temperature Check";
+            p[i].priority = 3;
+            p[i].room = "OPD";
+        }
 
-        elif headache.lower() == "yes":
-            disease = "Viral Fever"
+        else if(p[i].symptom == "headache")
+        {
+            p[i].disease = "Migraine";
+            p[i].doctor = "Neurologist";
+            p[i].test = "MRI Scan";
+            p[i].priority = 2;
+            p[i].room = "Observation Room";
+        }
 
-        else:
-            disease = "Mild Fever"
+        else if(p[i].symptom == "chestpain")
+        {
+            p[i].disease = "Heart Problem";
+            p[i].doctor = "Cardiologist";
+            p[i].test = "ECG";
+            p[i].priority = 1;
+            p[i].room = "ICU";
+        }
 
-        results.append("Possible Disease: " + disease)
+        else if(p[i].symptom == "stomachpain")
+        {
+            p[i].disease = "Acidity";
+            p[i].doctor = "Gastroenterologist";
+            p[i].test = "Stomach Checkup";
+            p[i].priority = 2;
+            p[i].room = "General Ward";
+        }
 
-    # Stomach Rule
+        else
+        {
+            p[i].disease = "Unknown";
+            p[i].doctor = "General Physician";
+            p[i].test = "General Checkup";
+            p[i].priority = 3;
+            p[i].room = "OPD";
+        }
+    }
 
-    if stomach.lower() == "yes":
-        results.append("Possible Problem: Acidity or Indigestion")
+    // Priority Scheduling
+    for(int i = 0; i < n - 1; i++)
+    {
+        for(int j = i + 1; j < n; j++)
+        {
+            if(p[j].priority < p[i].priority)
+            {
+                swap(p[i], p[j]);
+            }
+        }
+    }
 
-    # Chest Rule
+    // Display Final Report
+    cout << "\n\n===========================================";
+    cout << "\n       PATIENT TREATMENT SCHEDULE";
+    cout << "\n===========================================";
 
-    if chest.lower() == "yes":
-        results.append("Heart Checkup Recommended")
+    for(int i = 0; i < n; i++)
+    {
+        cout << "\n\nPatient Number : " << i + 1;
 
-    # Doctor Suggestion
+        cout << "\nPatient Name   : " << p[i].name;
 
-    if chest.lower() == "yes":
-        doctor = "Cardiologist"
+        cout << "\nAge            : " << p[i].age;
 
-    elif stomach.lower() == "yes":
-        doctor = "Gastroenterologist"
+        cout << "\nSymptom        : " << p[i].symptom;
 
-    else:
-        doctor = "General Physician"
+        cout << "\nDisease        : " << p[i].disease;
 
-    results.append("Doctor Suggested: " + doctor)
+        cout << "\nDoctor         : " << p[i].doctor;
 
-    # Final Status
+        cout << "\nRecommended Test : " << p[i].test;
 
-    if chest.lower() == "yes":
-        status = "Immediate Attention Required"
+        cout << "\nAssigned Room  : " << p[i].room;
 
-    else:
-        status = "Condition Stable"
+        if(p[i].priority == 1)
+        {
+            cout << "\nPriority Level : Emergency";
+        }
 
-    # Output Section
+        else if(p[i].priority == 2)
+        {
+            cout << "\nPriority Level : Serious";
+        }
 
-    print("\n===================================")
-    print(" EXPERT SYSTEM RECOMMENDATIONS ")
-    print("===================================\n")
+        else
+        {
+            cout << "\nPriority Level : Normal";
+        }
 
-    print("Patient Name:", name)
-    print("Age:", age)
+        cout << "\n---------------------------------------";
+    }
 
-    for r in results:
-        print("•", r)
+    cout << "\n\nEmergency patients are treated first.";
+    cout << "\nScheduling completed successfully.";
 
-    # Explanation Section
-
-    print("\n===================================")
-    print(" SYSTEM DECISION EXPLANATION ")
-    print("===================================\n")
-
-    explanation = ""
-
-    if fever.lower() == "yes":
-        explanation += (
-            "Fever indicates possible infection in the body. "
-        )
-
-    if cough.lower() == "yes":
-        explanation += (
-            "Cough with fever may indicate flu symptoms. "
-        )
-
-    if headache.lower() == "yes":
-        explanation += (
-            "Headache with fever may indicate viral fever. "
-        )
-
-    if stomach.lower() == "yes":
-        explanation += (
-            "Stomach pain is commonly related to acidity or indigestion. "
-        )
-
-    if chest.lower() == "yes":
-        explanation += (
-            "Chest pain may indicate heart-related problems. "
-        )
-
-    print(explanation)
-
-    print("\nFinal Status:", status)
-
-    choice = input("\nAnalyze another patient? (yes/no): ")
-
-    if choice.lower() != "yes":
-        print("\nThank You for Using Hospital Expert System")
-        break
-
-
-
-
+    return 0;
+}
 
