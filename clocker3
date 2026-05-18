@@ -1,0 +1,282 @@
+1.cb
+index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Support Chatbot</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="chat-container">
+
+        <h2>Customer Support Chatbot</h2>
+
+        <div id="chatbox"></div>
+
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
+
+
+
+style.css
+
+body {
+    font-family: Arial;
+    background-color: lightblue;
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.chat-container {
+    width: 400px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h2 {
+    text-align: center;
+}
+
+#chatbox {
+    height: 300px;
+    border: 1px solid gray;
+    padding: 10px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    background-color: #f5f5f5;
+}
+
+.input-area {
+    display: flex;
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+}
+
+button {
+    padding: 10px;
+    background-color: green;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+
+
+script.js
+
+function chatbotResponse(message) {
+
+    message = message.toLowerCase();
+
+    if (message.includes("hello") || message.includes("hi")) {
+        return "Hello! Welcome to Customer Support.";
+    }
+
+    else if (message.includes("product")) {
+        return "We have mobiles, laptops, and accessories.";
+    }
+
+    else if (message.includes("price")) {
+        return "Please mention the product name.";
+    }
+
+    else if (message.includes("order")) {
+        return "Your order will be delivered within 3-5 days.";
+    }
+
+    else if (message.includes("return")) {
+        return "Return policy is available for 7 days.";
+    }
+
+    else if (message.includes("refund")) {
+        return "Refund will be processed within 5 working days.";
+    }
+
+    else if (message.includes("contact")) {
+        return "You can contact us at support@gmail.com";
+    }
+
+    else if (message.includes("bye")) {
+        return "Thank you! Visit again.";
+    }
+
+    else {
+        return "Sorry, I didn't understand.";
+    }
+}
+
+function sendMessage() {
+
+    let userInput = document.getElementById("userInput").value;
+
+    if (userInput.trim() === "") {
+        return;
+    }
+
+    let chatbox = document.getElementById("chatbox");
+
+    // Display user message
+    chatbox.innerHTML += "<p><b>You:</b> " + userInput + "</p>";
+
+    // Get bot response
+    let botReply = chatbotResponse(userInput);
+
+    // Display bot response
+    chatbox.innerHTML += "<p><b>Bot:</b> " + botReply + "</p>";
+
+    // Clear input
+    document.getElementById("userInput").value = "";
+
+    // Auto scroll
+    chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+
+
+2ES
+
+
+import time
+
+print("===================================")
+print(" HOSPITAL EXPERT SYSTEM ")
+print("===================================")
+
+while True:
+
+    name = input("\nEnter Patient Name: ")
+    age = int(input("Enter Age: "))
+
+    print("\nEnter Symptoms (yes/no)\n")
+
+    fever = input("Fever: ")
+    cough = input("Cough: ")
+    headache = input("Headache: ")
+    stomach = input("Stomach Pain: ")
+    chest = input("Chest Pain: ")
+
+    print("\nAnalyzing Symptoms...")
+    time.sleep(2)
+
+    results = []
+
+    # Fever Rules
+
+    if fever.lower() == "yes":
+
+        if cough.lower() == "yes":
+            disease = "Flu"
+
+        elif headache.lower() == "yes":
+            disease = "Viral Fever"
+
+        else:
+            disease = "Mild Fever"
+
+        results.append("Possible Disease: " + disease)
+
+    # Stomach Rule
+
+    if stomach.lower() == "yes":
+        results.append("Possible Problem: Acidity or Indigestion")
+
+    # Chest Rule
+
+    if chest.lower() == "yes":
+        results.append("Heart Checkup Recommended")
+
+    # Doctor Suggestion
+
+    if chest.lower() == "yes":
+        doctor = "Cardiologist"
+
+    elif stomach.lower() == "yes":
+        doctor = "Gastroenterologist"
+
+    else:
+        doctor = "General Physician"
+
+    results.append("Doctor Suggested: " + doctor)
+
+    # Final Status
+
+    if chest.lower() == "yes":
+        status = "Immediate Attention Required"
+
+    else:
+        status = "Condition Stable"
+
+    # Output Section
+
+    print("\n===================================")
+    print(" EXPERT SYSTEM RECOMMENDATIONS ")
+    print("===================================\n")
+
+    print("Patient Name:", name)
+    print("Age:", age)
+
+    for r in results:
+        print("•", r)
+
+    # Explanation Section
+
+    print("\n===================================")
+    print(" SYSTEM DECISION EXPLANATION ")
+    print("===================================\n")
+
+    explanation = ""
+
+    if fever.lower() == "yes":
+        explanation += (
+            "Fever indicates possible infection in the body. "
+        )
+
+    if cough.lower() == "yes":
+        explanation += (
+            "Cough with fever may indicate flu symptoms. "
+        )
+
+    if headache.lower() == "yes":
+        explanation += (
+            "Headache with fever may indicate viral fever. "
+        )
+
+    if stomach.lower() == "yes":
+        explanation += (
+            "Stomach pain is commonly related to acidity or indigestion. "
+        )
+
+    if chest.lower() == "yes":
+        explanation += (
+            "Chest pain may indicate heart-related problems. "
+        )
+
+    print(explanation)
+
+    print("\nFinal Status:", status)
+
+    choice = input("\nAnalyze another patient? (yes/no): ")
+
+    if choice.lower() != "yes":
+        print("\nThank You for Using Hospital Expert System")
+        break
+
+
+
+
+
