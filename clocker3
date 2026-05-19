@@ -150,164 +150,136 @@ function sendMessage() {
 
 2ES
 
-// Advanced Hospital Expert System with Patient Scheduling
-#include <iostream>
-using namespace std;
+# Advanced Hospital Expert System with Patient Scheduling
 
-struct Patient
-{
-    string name;
-    int age;
-    string symptom;
-    int priority;
-    string disease;
-    string doctor;
-    string test;
-    string room;
-};
+print("===========================================")
+print("     HOSPITAL EXPERT SYSTEM")
+print("===========================================")
 
-int main()
-{
-    int n;
+n = int(input("\nEnter number of patients: "))
 
-    cout << "===========================================";
-    cout << "\n     HOSPITAL EXPERT SYSTEM";
-    cout << "\n===========================================";
+patients = []
 
-    cout << "\n\nEnter number of patients: ";
-    cin >> n;
+# Input Patient Details
+for i in range(n):
 
-    Patient p[20];
+    print("\n===================================")
+    print("Enter Details of Patient", i + 1)
+    print("===================================")
 
-    // Input Patient Details
-    for(int i = 0; i < n; i++)
-    {
-        cout << "\n===================================";
-        cout << "\nEnter Details of Patient " << i + 1;
-        cout << "\n===================================";
+    name = input("\nEnter Patient Name: ")
 
-        cout << "\nEnter Patient Name: ";
-        cin >> p[i].name;
+    age = int(input("Enter Age: "))
 
-        cout << "Enter Age: ";
-        cin >> p[i].age;
+    symptom = input(
+        "Enter Symptom "
+        "(fever/cold/headache/chestpain/stomachpain): "
+    )
 
-        cout << "Enter Symptom ";
-        cout << "(fever/cold/headache/chestpain/stomachpain): ";
-        cin >> p[i].symptom;
+    # Expert System Rules
 
-        // Expert System Rules
-        if(p[i].symptom == "fever")
-        {
-            p[i].disease = "Viral Fever";
-            p[i].doctor = "General Physician";
-            p[i].test = "Blood Test";
-            p[i].priority = 2;
-            p[i].room = "General Ward";
-        }
+    if symptom == "fever":
 
-        else if(p[i].symptom == "cold")
-        {
-            p[i].disease = "Common Cold";
-            p[i].doctor = "ENT Specialist";
-            p[i].test = "Temperature Check";
-            p[i].priority = 3;
-            p[i].room = "OPD";
-        }
+        disease = "Viral Fever"
+        doctor = "General Physician"
+        test = "Blood Test"
+        priority = 2
+        room = "General Ward"
 
-        else if(p[i].symptom == "headache")
-        {
-            p[i].disease = "Migraine";
-            p[i].doctor = "Neurologist";
-            p[i].test = "MRI Scan";
-            p[i].priority = 2;
-            p[i].room = "Observation Room";
-        }
+    elif symptom == "cold":
 
-        else if(p[i].symptom == "chestpain")
-        {
-            p[i].disease = "Heart Problem";
-            p[i].doctor = "Cardiologist";
-            p[i].test = "ECG";
-            p[i].priority = 1;
-            p[i].room = "ICU";
-        }
+        disease = "Common Cold"
+        doctor = "ENT Specialist"
+        test = "Temperature Check"
+        priority = 3
+        room = "OPD"
 
-        else if(p[i].symptom == "stomachpain")
-        {
-            p[i].disease = "Acidity";
-            p[i].doctor = "Gastroenterologist";
-            p[i].test = "Stomach Checkup";
-            p[i].priority = 2;
-            p[i].room = "General Ward";
-        }
+    elif symptom == "headache":
 
-        else
-        {
-            p[i].disease = "Unknown";
-            p[i].doctor = "General Physician";
-            p[i].test = "General Checkup";
-            p[i].priority = 3;
-            p[i].room = "OPD";
-        }
+        disease = "Migraine"
+        doctor = "Neurologist"
+        test = "MRI Scan"
+        priority = 2
+        room = "Observation Room"
+
+    elif symptom == "chestpain":
+
+        disease = "Heart Problem"
+        doctor = "Cardiologist"
+        test = "ECG"
+        priority = 1
+        room = "ICU"
+
+    elif symptom == "stomachpain":
+
+        disease = "Acidity"
+        doctor = "Gastroenterologist"
+        test = "Stomach Checkup"
+        priority = 2
+        room = "General Ward"
+
+    else:
+
+        disease = "Unknown"
+        doctor = "General Physician"
+        test = "General Checkup"
+        priority = 3
+        room = "OPD"
+
+    # Store Patient Details
+    patient = {
+        "name": name,
+        "age": age,
+        "symptom": symptom,
+        "disease": disease,
+        "doctor": doctor,
+        "test": test,
+        "priority": priority,
+        "room": room
     }
 
-    // Priority Scheduling
-    for(int i = 0; i < n - 1; i++)
-    {
-        for(int j = i + 1; j < n; j++)
-        {
-            if(p[j].priority < p[i].priority)
-            {
-                swap(p[i], p[j]);
-            }
-        }
-    }
+    patients.append(patient)
 
-    // Display Final Report
-    cout << "\n\n===========================================";
-    cout << "\n       PATIENT TREATMENT SCHEDULE";
-    cout << "\n===========================================";
+# Priority Scheduling
+patients.sort(key=lambda x: x["priority"])
 
-    for(int i = 0; i < n; i++)
-    {
-        cout << "\n\nPatient Number : " << i + 1;
+# Display Final Report
 
-        cout << "\nPatient Name   : " << p[i].name;
+print("\n\n===========================================")
+print("       PATIENT TREATMENT SCHEDULE")
+print("===========================================")
 
-        cout << "\nAge            : " << p[i].age;
+for i in range(n):
 
-        cout << "\nSymptom        : " << p[i].symptom;
+    print("\n\nPatient Number :", i + 1)
 
-        cout << "\nDisease        : " << p[i].disease;
+    print("Patient Name   :", patients[i]["name"])
 
-        cout << "\nDoctor         : " << p[i].doctor;
+    print("Age            :", patients[i]["age"])
 
-        cout << "\nRecommended Test : " << p[i].test;
+    print("Symptom        :", patients[i]["symptom"])
 
-        cout << "\nAssigned Room  : " << p[i].room;
+    print("Disease        :", patients[i]["disease"])
 
-        if(p[i].priority == 1)
-        {
-            cout << "\nPriority Level : Emergency";
-        }
+    print("Doctor         :", patients[i]["doctor"])
 
-        else if(p[i].priority == 2)
-        {
-            cout << "\nPriority Level : Serious";
-        }
+    print("Recommended Test :", patients[i]["test"])
 
-        else
-        {
-            cout << "\nPriority Level : Normal";
-        }
+    print("Assigned Room  :", patients[i]["room"])
 
-        cout << "\n---------------------------------------";
-    }
+    if patients[i]["priority"] == 1:
 
-    cout << "\n\nEmergency patients are treated first.";
-    cout << "\nScheduling completed successfully.";
+        print("Priority Level : Emergency")
 
-    return 0;
-}
+    elif patients[i]["priority"] == 2:
 
+        print("Priority Level : Serious")
+
+    else:
+
+        print("Priority Level : Normal")
+
+    print("---------------------------------------")
+
+print("\nEmergency patients are treated first.")
+print("Scheduling completed successfully.")
