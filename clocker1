@@ -396,166 +396,262 @@ int main(){
 }
 
 
-4.py
+4.CP
 
-# Greedy Algorithms Implementation
-# 1. Selection Sort
-# 2. Job Scheduling Problem
-# 3. Dijkstra's Shortest Path Algorithm
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<map>
 
-import heapq
+using namespace std;
 
-# ================= SELECTION SORT =================
+// ================= SELECTION SORT =================
 
-def selection_sort(arr):
+void selectionSort(vector<int> &arr)
+{
+    int n = arr.size();
 
-    n = len(arr)
+    for(int i = 0; i < n; i++)
+    {
+        int minIndex = i;
 
-    for i in range(n):
-
-        min_index = i
-
-        # Find smallest element
-        for j in range(i + 1, n):
-            if arr[j] < arr[min_index]:
-                min_index = j
-
-        # Swap elements
-        arr[i], arr[min_index] = arr[min_index], arr[i]
-
-    return arr
-
-
-# ================= JOB SCHEDULING =================
-
-def job_scheduling():
-
-    jobs = [
-        ('J1', 2, 100),
-        ('J2', 1, 50),
-        ('J3', 2, 10),
-        ('J4', 1, 20),
-        ('J5', 3, 30)
-    ]
-
-    # Sort according to profit
-    jobs.sort(key=lambda x: x[2], reverse=True)
-
-    max_deadline = max(job[1] for job in jobs)
-
-    slots = [False] * max_deadline
-
-    result = []
-
-    total_profit = 0
-
-    for job in jobs:
-
-        name, deadline, profit = job
-
-        for i in range(deadline - 1, -1, -1):
-
-            if not slots[i]:
-
-                slots[i] = True
-                result.append(name)
-                total_profit += profit
-                break
-
-    print("\nSelected Jobs:")
-    print(result)
-
-    print("Total Profit:")
-    print(total_profit)
-
-
-# ================= DIJKSTRA ALGORITHM =================
-
-def dijkstra(graph, start):
-
-    distances = {node: float('inf') for node in graph}
-
-    distances[start] = 0
-
-    priority_queue = [(0, start)]
-
-    while priority_queue:
-
-        current_distance, current_node = heapq.heappop(priority_queue)
-
-        for neighbor, weight in graph[current_node]:
-
-            distance = current_distance + weight
-
-            if distance < distances[neighbor]:
-
-                distances[neighbor] = distance
-
-                heapq.heappush(priority_queue, (distance, neighbor))
-
-    return distances
-
-
-# ================= MAIN PROGRAM =================
-
-while True:
-
-    print("\n===== GREEDY ALGORITHMS MENU =====")
-    print("1. Selection Sort")
-    print("2. Job Scheduling Problem")
-    print("3. Dijkstra Shortest Path")
-    print("4. Exit")
-
-    choice = int(input("Enter your choice: "))
-
-    # -------- Selection Sort --------
-    if choice == 1:
-
-        arr = [64, 25, 12, 22, 11]
-
-        print("\nOriginal Array:")
-        print(arr)
-
-        sorted_array = selection_sort(arr)
-
-        print("\nSorted Array:")
-        print(sorted_array)
-
-    # -------- Job Scheduling --------
-    elif choice == 2:
-
-        job_scheduling()
-
-    # -------- Dijkstra Algorithm --------
-    elif choice == 3:
-
-        graph = {
-            'A': [('B', 4), ('C', 1)],
-            'B': [('D', 2), ('E', 5)],
-            'C': [('B', 2), ('D', 4)],
-            'D': [('E', 1)],
-            'E': []
+        // Find minimum element
+        for(int j = i + 1; j < n; j++)
+        {
+            if(arr[j] < arr[minIndex])
+            {
+                minIndex = j;
+            }
         }
 
-        result = dijkstra(graph, 'A')
+        // Swap elements
+        swap(arr[i], arr[minIndex]);
+    }
 
-        print("\nShortest Distances from Source A:\n")
+    cout << "\nOptimal Sorted Array:\n";
 
-        for node, distance in result.items():
-            print(node, ":", distance)
+    for(int x : arr)
+    {
+        cout << x << " ";
+    }
 
-    # -------- Exit --------
-    elif choice == 4:
-
-        print("\nProgram Ended")
-        break
-
-    else:
-        print("\nInvalid Choice")
+    cout << endl;
+}
 
 
+// ================= JOB SCHEDULING =================
+
+struct Job
+{
+    string id;
+    int deadline;
+    int profit;
+};
+
+bool compare(Job a, Job b)
+{
+    return a.profit > b.profit;
+}
+
+void jobScheduling()
+{
+    vector<Job> jobs =
+    {
+        {"J1", 2, 100},
+        {"J2", 1, 50},
+        {"J3", 2, 10},
+        {"J4", 1, 20},
+        {"J5", 3, 30}
+    };
+
+    // Sort by highest profit
+    sort(jobs.begin(), jobs.end(), compare);
+
+    int maxDeadline = 0;
+
+    for(Job j : jobs)
+    {
+        maxDeadline = max(maxDeadline, j.deadline);
+    }
+
+    vector<bool> slot(maxDeadline, false);
+
+    vector<string> result;
+
+    int totalProfit = 0;
+
+    for(Job j : jobs)
+    {
+        for(int i = j.deadline - 1; i >= 0; i--)
+        {
+            if(!slot[i])
+            {
+                slot[i] = true;
+                result.push_back(j.id);
+                totalProfit += j.profit;
+                break;
+            }
+        }
+    }
+
+    cout << "\nOptimal Job Sequence:\n";
+
+    for(string s : result)
+    {
+        cout << s << " ";
+    }
+
+    cout << "\nMaximum Profit: " << totalProfit << endl;
+}
 
 
+// ================= DIJKSTRA ALGORITHM =================
+
+void printPath(map<char,char> &parent, char node)
+{
+    if(parent[node] == node)
+    {
+        cout << node;
+        return;
+    }
+
+    printPath(parent, parent[node]);
+
+    cout << " -> " << node;
+}
+
+void dijkstra()
+{
+    map<char, vector<pair<char,int>>> graph;
+
+    graph['A'] = {{'B',4}, {'C',1}};
+    graph['B'] = {{'D',2}, {'E',5}};
+    graph['C'] = {{'B',2}, {'D',4}};
+    graph['D'] = {{'E',1}};
+    graph['E'] = {};
+
+    map<char,int> distance;
+    map<char,char> parent;
+
+    // Initialize distances
+    for(auto node : graph)
+    {
+        distance[node.first] = 9999;
+    }
+
+    distance['A'] = 0;
+    parent['A'] = 'A';
+
+    priority_queue<
+        pair<int,char>,
+        vector<pair<int,char>>,
+        greater<pair<int,char>>
+    > pq;
+
+    pq.push({0,'A'});
+
+    while(!pq.empty())
+    {
+        int currentDistance = pq.top().first;
+        char currentNode = pq.top().second;
+
+        pq.pop();
+
+        for(auto neighbor : graph[currentNode])
+        {
+            char nextNode = neighbor.first;
+            int weight = neighbor.second;
+
+            int newDistance = currentDistance + weight;
+
+            // Update shorter path
+            if(newDistance < distance[nextNode])
+            {
+                distance[nextNode] = newDistance;
+
+                parent[nextNode] = currentNode;
+
+                pq.push({newDistance, nextNode});
+            }
+        }
+    }
+
+    cout << "\nOptimal Shortest Paths from Source A:\n";
+
+    for(auto d : distance)
+    {
+        cout << "\nNode " << d.first << endl;
+
+        cout << "Distance = " << d.second << endl;
+
+        cout << "Path = ";
+
+        printPath(parent, d.first);
+
+        cout << endl;
+    }
+}
 
 
+// ================= MAIN PROGRAM =================
 
+int main()
+{
+    int choice;
+
+    while(true)
+    {
+        cout << "\n===== GREEDY ALGORITHMS MENU =====\n";
+        cout << "1. Selection Sort\n";
+        cout << "2. Job Scheduling Problem\n";
+        cout << "3. Dijkstra Shortest Path\n";
+        cout << "4. Exit\n";
+
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        // -------- Selection Sort --------
+        if(choice == 1)
+        {
+            vector<int> arr = {64, 25, 12, 22, 11};
+
+            cout << "\nOriginal Array:\n";
+
+            for(int x : arr)
+            {
+                cout << x << " ";
+            }
+
+            cout << endl;
+
+            selectionSort(arr);
+        }
+
+        // -------- Job Scheduling --------
+        else if(choice == 2)
+        {
+            jobScheduling();
+        }
+
+        // -------- Dijkstra --------
+        else if(choice == 3)
+        {
+            dijkstra();
+        }
+
+        // -------- Exit --------
+        else if(choice == 4)
+        {
+            cout << "\nProgram Ended\n";
+            break;
+        }
+
+        else
+        {
+            cout << "\nInvalid Choice\n";
+        }
+    }
+
+    return 0;
+}
